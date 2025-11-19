@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://your_name.github.io/CLOCs_LQS-Module-extraction/Stage2_PairFeatureBuilding/" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Stage2 Pair 特征构建 (Pair Feature Building) - CLOCs_LQS 融合模块文档</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../assets/_mkdocstrings.css" rel="stylesheet" />
+        <link href="../css/overrides.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Stage2 Pair \u7279\u5f81\u6784\u5efa (Pair Feature Building)";
+        var mkdocs_page_input_path = "Stage2_PairFeatureBuilding.md";
+        var mkdocs_page_url = "/CLOCs_LQS-Module-extraction/Stage2_PairFeatureBuilding/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> CLOCs_LQS 融合模块文档
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">文档首页</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../Stage1_CandidateMatching/">Stage1 候选匹配 (Candidate Matching)</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Stage2 Pair 特征构建 (Pair Feature Building)</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#api">API 文档</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#pair_feature_encoder">pair_feature_encoder</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#Stage2_PairFeatureBuilding.operator.pair_feature_encoder">pair_feature_encoder</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#Stage2_PairFeatureBuilding.operator.pair_feature_encoder.pair_feature_encoder">pair_feature_encoder</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../Stage3_FusionMLP/">Stage3 FusionMLP 融合网络</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../Stage4_ScoreAggregation/">Stage4 得分聚合 (Score Aggregation)</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../Stage5_PostProcessing/">Stage5 后处理 (PostProcessing)</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../CLOCs_LQS_framework/">CLOCs_LQS 融合框架</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">CLOCs_LQS 融合模块文档</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Stage2 Pair 特征构建 (Pair Feature Building)</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/your_name/CLOCs_LQS-Module-extraction/edit/main/docs/Stage2_PairFeatureBuilding.md">Edit on 在 GitHub 上查看</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="stage-2-pair-feature-buildingpair">Stage 2 — Pair Feature Building（Pair 特征构建）<a class="headerlink" href="#stage-2-pair-feature-buildingpair" title="Permanent link">&para;</a></h1>
+<p>本阶段的作用是 <strong>根据有效的 2D–3D pair 构造融合特征向量</strong>，为融合网络提供输入。</p>
+<p>本阶段包含一个算子：</p>
+<ul>
+<li><strong>pair_feature_encoder</strong><br />
+  构造融合特征向量：</li>
+</ul>
+<hr />
+<h2 id="api">API 文档<a class="headerlink" href="#api" title="Permanent link">&para;</a></h2>
+<h3 id="pair_feature_encoder">pair_feature_encoder<a class="headerlink" href="#pair_feature_encoder" title="Permanent link">&para;</a></h3>
+
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="Stage2_PairFeatureBuilding.operator.pair_feature_encoder"></a>
+    <div class="doc doc-contents first">
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="Stage2_PairFeatureBuilding.operator.pair_feature_encoder.pair_feature_encoder" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">pair_feature_encoder</span><span class="p">(</span><span class="n">pair_indices</span><span class="p">,</span> <span class="n">iou_matrix</span><span class="p">,</span> <span class="n">scores_2d</span><span class="p">,</span> <span class="n">scores_3d</span><span class="p">,</span> <span class="n">boxes_3d</span><span class="p">)</span></code>
+
+<a href="#Stage2_PairFeatureBuilding.operator.pair_feature_encoder.pair_feature_encoder" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>根据 pair_indices 为每个 2D–3D 配对生成 4 维融合特征：
+[IoU2D(i,j), score_3D(j), score_2D(i), distance_3D_center(j)]</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>pair_indices</code></b>
+                  (<code><span title="torch.Tensor">Tensor</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>(p, 2)
+每行是一个有效配对 (i_2d, j_3d)。</p>
+              </div>
+            </li>
+            <li>
+              <b><code>iou_matrix</code></b>
+                  (<code><span title="torch.Tensor">Tensor</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>(K, N)
+2D IoU 矩阵，第 i 行对应第 i 个 2D 框，第 j 列对应第 j 个 3D 投影框。</p>
+              </div>
+            </li>
+            <li>
+              <b><code>scores_2d</code></b>
+                  (<code><span title="torch.Tensor">Tensor</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>(K)
+2D 检测器的置信度分数。</p>
+              </div>
+            </li>
+            <li>
+              <b><code>scores_3d</code></b>
+                  (<code><span title="torch.Tensor">Tensor</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>(N)
+3D 检测器的置信度分数。</p>
+              </div>
+            </li>
+            <li>
+              <b><code>boxes_3d</code></b>
+                  (<code><span title="torch.Tensor">Tensor</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>(N, 7)
+3D 检测框参数 [x, y, z, w, l, h, yaw]，用于计算中心点距离。</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+<b><code>pair_features</code></b>(                  <code><span title="torch.Tensor">Tensor</span></code>
+)              –
+              <div class="doc-md-description">
+                <p>(4, 1, p)
+4 个通道的融合特征，每个对应一个 pair。
+维度顺序为 [特征维度, 1, p]，与后续 Conv2d 输入格式兼容。</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+            <details class="quote">
+              <summary>Source code in <code>Stage2_PairFeatureBuilding\operator\pair_feature_encoder.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@torch</span><span class="o">.</span><span class="n">library</span><span class="o">.</span><span class="n">custom_op</span><span class="p">(</span><span class="s2">&quot;clocs::pair_feature_encoder&quot;</span><span class="p">,</span> <span class="n">mutates_args</span><span class="o">=</span><span class="p">[])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">pair_feature_encoder</span><span class="p">(</span><span class="n">pair_indices</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+                         <span class="n">iou_matrix</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+                         <span class="n">scores_2d</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+                         <span class="n">scores_3d</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+                         <span class="n">boxes_3d</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    根据 pair_indices 为每个 2D–3D 配对生成 4 维融合特征：</span>
+<span class="sd">    [IoU2D(i,j), score_3D(j), score_2D(i), distance_3D_center(j)]</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        pair_indices: (p, 2)</span>
+<span class="sd">            每行是一个有效配对 (i_2d, j_3d)。</span>
+<span class="sd">        iou_matrix: (K, N)</span>
+<span class="sd">            2D IoU 矩阵，第 i 行对应第 i 个 2D 框，第 j 列对应第 j 个 3D 投影框。</span>
+<span class="sd">        scores_2d: (K)</span>
+<span class="sd">            2D 检测器的置信度分数。</span>
+<span class="sd">        scores_3d: (N)</span>
+<span class="sd">            3D 检测器的置信度分数。</span>
+<span class="sd">        boxes_3d: (N, 7)</span>
+<span class="sd">            3D 检测框参数 [x, y, z, w, l, h, yaw]，用于计算中心点距离。</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pair_features: (4, 1, p)</span>
+<span class="sd">            4 个通道的融合特征，每个对应一个 pair。</span>
+<span class="sd">            维度顺序为 [特征维度, 1, p]，与后续 Conv2d 输入格式兼容。</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">idx_i</span> <span class="o">=</span> <span class="n">pair_indices</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>   <span class="c1"># 2D indices, shape [p]</span>
+    <span class="n">idx_j</span> <span class="o">=</span> <span class="n">pair_indices</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>   <span class="c1"># 3D indices, shape [p]</span>
+
+    <span class="c1"># IoU feature</span>
+    <span class="n">iou</span> <span class="o">=</span> <span class="n">iou_matrix</span><span class="p">[</span><span class="n">idx_i</span><span class="p">,</span> <span class="n">idx_j</span><span class="p">]</span>   <span class="c1"># [p]</span>
+
+    <span class="c1"># Scores</span>
+    <span class="n">s3d</span> <span class="o">=</span> <span class="n">scores_3d</span><span class="p">[</span><span class="n">idx_j</span><span class="p">]</span>           <span class="c1"># [p]</span>
+    <span class="n">s2d</span> <span class="o">=</span> <span class="n">scores_2d</span><span class="p">[</span><span class="n">idx_i</span><span class="p">]</span>           <span class="c1"># [p]</span>
+
+    <span class="c1"># Distance of 3D center</span>
+    <span class="n">centers</span> <span class="o">=</span> <span class="n">boxes_3d</span><span class="p">[</span><span class="n">idx_j</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>   <span class="c1"># (p,3)</span>
+    <span class="n">dist</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">centers</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># [p]</span>
+
+    <span class="c1"># Stack features → [4,p]</span>
+    <span class="n">feats</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">iou</span><span class="p">,</span> <span class="n">s3d</span><span class="p">,</span> <span class="n">s2d</span><span class="p">,</span> <span class="n">dist</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># reshape → [4,1,p]</span>
+    <span class="n">feats</span> <span class="o">=</span> <span class="n">feats</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">feats</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../Stage1_CandidateMatching/" class="btn btn-neutral float-left" title="Stage1 候选匹配 (Candidate Matching)"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../Stage3_FusionMLP/" class="btn btn-neutral float-right" title="Stage3 FusionMLP 融合网络">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/your_name/CLOCs_LQS-Module-extraction" class="fa fa-code-fork" style="color: #fcfcfc"> 在 GitHub 上查看</a>
+        </span>
+    
+    
+      <span><a href="../Stage1_CandidateMatching/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../Stage3_FusionMLP/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

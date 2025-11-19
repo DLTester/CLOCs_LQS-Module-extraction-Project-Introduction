@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://your_name.github.io/CLOCs_LQS-Module-extraction/Stage4_ScoreAggregation/" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Stage4 得分聚合 (Score Aggregation) - CLOCs_LQS 融合模块文档</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../assets/_mkdocstrings.css" rel="stylesheet" />
+        <link href="../css/overrides.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Stage4 \u5f97\u5206\u805a\u5408 (Score Aggregation)";
+        var mkdocs_page_input_path = "Stage4_ScoreAggregation.md";
+        var mkdocs_page_url = "/CLOCs_LQS-Module-extraction/Stage4_ScoreAggregation/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> CLOCs_LQS 融合模块文档
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">文档首页</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../Stage1_CandidateMatching/">Stage1 候选匹配 (Candidate Matching)</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../Stage2_PairFeatureBuilding/">Stage2 Pair 特征构建 (Pair Feature Building)</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../Stage3_FusionMLP/">Stage3 FusionMLP 融合网络</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Stage4 得分聚合 (Score Aggregation)</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#api">API 文档</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#scatter_to_matrix">scatter_to_matrix</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#Stage4_ScoreAggregation.operator.scatter_to_matrix">scatter_to_matrix</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#Stage4_ScoreAggregation.operator.scatter_to_matrix.scatter_to_matrix">scatter_to_matrix</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#score_aggregator">score_aggregator</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#Stage4_ScoreAggregation.operator.score_aggregator">score_aggregator</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#Stage4_ScoreAggregation.operator.score_aggregator.score_aggregator">score_aggregator</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../Stage5_PostProcessing/">Stage5 后处理 (PostProcessing)</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../CLOCs_LQS_framework/">CLOCs_LQS 融合框架</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">CLOCs_LQS 融合模块文档</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Stage4 得分聚合 (Score Aggregation)</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/your_name/CLOCs_LQS-Module-extraction/edit/main/docs/Stage4_ScoreAggregation.md">Edit on 在 GitHub 上查看</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="stage-4-score-aggregation">Stage 4 — Score Aggregation（融合得分聚合）<a class="headerlink" href="#stage-4-score-aggregation" title="Permanent link">&para;</a></h1>
+<p>本阶段的作用是 <strong>将 pair-level 得分映射回原始 3D 检测框</strong>, 得到最终的每个 3D 框的融合分数。</p>
+<p>本阶段包含两个算子：</p>
+<ol>
+<li>
+<p><strong>scatter_to_matrix</strong><br />
+   将 p 个 pair 得分映射回 (K×N) score matrix。</p>
+</li>
+<li>
+<p><strong>score_aggregator</strong><br />
+   沿 2D 维度 MaxPool 得到最终 N 个融合得分。</p>
+</li>
+</ol>
+<hr />
+<h2 id="api">API 文档<a class="headerlink" href="#api" title="Permanent link">&para;</a></h2>
+<h3 id="scatter_to_matrix">scatter_to_matrix<a class="headerlink" href="#scatter_to_matrix" title="Permanent link">&para;</a></h3>
+
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="Stage4_ScoreAggregation.operator.scatter_to_matrix"></a>
+    <div class="doc doc-contents first">
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="Stage4_ScoreAggregation.operator.scatter_to_matrix.scatter_to_matrix" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">scatter_to_matrix</span><span class="p">(</span><span class="n">pair_scores</span><span class="p">,</span> <span class="n">pair_indices</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span></code>
+
+<a href="#Stage4_ScoreAggregation.operator.scatter_to_matrix.scatter_to_matrix" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>将 p 个 pair 得分根据 pair_indices 散射回 (1, K, N) 的得分矩阵。
+对于没有对应 pair 的位置填充一个极小值。</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>pair_scores</code></b>
+                  (<code><span title="torch.Tensor">Tensor</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>(p,) 或 (1,1,p)
+每个 pair 的融合得分。</p>
+              </div>
+            </li>
+            <li>
+              <b><code>pair_indices</code></b>
+                  (<code><span title="torch.Tensor">Tensor</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>(p,2)
+每行 (i_2d, j_3d) 表示该 score 应写入矩阵位置 (i, j)。</p>
+              </div>
+            </li>
+            <li>
+              <b><code>K</code></b>
+                  (<code>int</code>)
+              –
+              <div class="doc-md-description">
+                <p>int
+本帧 2D 框数量上限。</p>
+              </div>
+            </li>
+            <li>
+              <b><code>N</code></b>
+                  (<code>int</code>)
+              –
+              <div class="doc-md-description">
+                <p>int
+本帧 3D 框数量上限。</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+<b><code>score_matrix</code></b>(                  <code><span title="torch.Tensor">Tensor</span></code>
+)              –
+              <div class="doc-md-description">
+                <p>(1, K, N)
+对应位置写入 pair score，其余位置为负无穷小。</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+            <details class="quote">
+              <summary>Source code in <code>Stage4_ScoreAggregation\operator\scatter_to_matrix.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@torch</span><span class="o">.</span><span class="n">library</span><span class="o">.</span><span class="n">custom_op</span><span class="p">(</span><span class="s2">&quot;clocs::scatter_to_matrix&quot;</span><span class="p">,</span> <span class="n">mutates_args</span><span class="o">=</span><span class="p">[])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">scatter_to_matrix</span><span class="p">(</span><span class="n">pair_scores</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+                      <span class="n">pair_indices</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+                      <span class="n">K</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                      <span class="n">N</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    将 p 个 pair 得分根据 pair_indices 散射回 (1, K, N) 的得分矩阵。</span>
+<span class="sd">    对于没有对应 pair 的位置填充一个极小值。</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        pair_scores: (p,) 或 (1,1,p)</span>
+<span class="sd">            每个 pair 的融合得分。</span>
+<span class="sd">        pair_indices: (p,2)</span>
+<span class="sd">            每行 (i_2d, j_3d) 表示该 score 应写入矩阵位置 (i, j)。</span>
+<span class="sd">        K: int</span>
+<span class="sd">            本帧 2D 框数量上限。</span>
+<span class="sd">        N: int</span>
+<span class="sd">            本帧 3D 框数量上限。</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        score_matrix: (1, K, N)</span>
+<span class="sd">            对应位置写入 pair score，其余位置为负无穷小。</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># 兼容输入为 (1,1,p) 或 (p,)</span>
+    <span class="k">if</span> <span class="n">pair_scores</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">pair_scores</span> <span class="o">=</span> <span class="n">pair_scores</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+
+    <span class="n">score_matrix</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">full</span><span class="p">(</span>
+        <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">N</span><span class="p">),</span> <span class="o">-</span><span class="mf">1e7</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">pair_scores</span><span class="o">.</span><span class="n">device</span>
+    <span class="p">)</span>
+
+    <span class="n">i_idx</span> <span class="o">=</span> <span class="n">pair_indices</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">j_idx</span> <span class="o">=</span> <span class="n">pair_indices</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">score_matrix</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">i_idx</span><span class="p">,</span> <span class="n">j_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">pair_scores</span>
+
+    <span class="k">return</span> <span class="n">score_matrix</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div><h3 id="score_aggregator">score_aggregator<a class="headerlink" href="#score_aggregator" title="Permanent link">&para;</a></h3>
+
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="Stage4_ScoreAggregation.operator.score_aggregator"></a>
+    <div class="doc doc-contents first">
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="Stage4_ScoreAggregation.operator.score_aggregator.score_aggregator" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">score_aggregator</span><span class="p">(</span><span class="n">score_matrix</span><span class="p">)</span></code>
+
+<a href="#Stage4_ScoreAggregation.operator.score_aggregator.score_aggregator" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>对 score_matrix (1, K, N) 在 2D 维度上做最大池化，
+为每个 3D 框得到唯一融合得分。</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>score_matrix</code></b>
+                  (<code><span title="torch.Tensor">Tensor</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>(1, K, N)
+来自 scatter_to_matrix 的得分矩阵。</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+<b><code>fused_scores</code></b>(                  <code><span title="torch.Tensor">Tensor</span></code>
+)              –
+              <div class="doc-md-description">
+                <p>(N)
+每个 3D 框的融合置信度，取 score_matrix 在 K 维的最大值。</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+            <details class="quote">
+              <summary>Source code in <code>Stage4_ScoreAggregation\operator\score_aggregator.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@torch</span><span class="o">.</span><span class="n">library</span><span class="o">.</span><span class="n">custom_op</span><span class="p">(</span><span class="s2">&quot;clocs::score_aggregator&quot;</span><span class="p">,</span> <span class="n">mutates_args</span><span class="o">=</span><span class="p">[])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">score_aggregator</span><span class="p">(</span><span class="n">score_matrix</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    对 score_matrix (1, K, N) 在 2D 维度上做最大池化，</span>
+<span class="sd">    为每个 3D 框得到唯一融合得分。</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        score_matrix: (1, K, N)</span>
+<span class="sd">            来自 scatter_to_matrix 的得分矩阵。</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        fused_scores: (N)</span>
+<span class="sd">            每个 3D 框的融合置信度，取 score_matrix 在 K 维的最大值。</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># score_matrix: [1, K, N]</span>
+    <span class="n">fused_scores</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">score_matrix</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># → [1, N]</span>
+
+    <span class="c1"># squeeze → [N]</span>
+    <span class="n">fused_scores</span> <span class="o">=</span> <span class="n">fused_scores</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fused_scores</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../Stage3_FusionMLP/" class="btn btn-neutral float-left" title="Stage3 FusionMLP 融合网络"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../Stage5_PostProcessing/" class="btn btn-neutral float-right" title="Stage5 后处理 (PostProcessing)">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/your_name/CLOCs_LQS-Module-extraction" class="fa fa-code-fork" style="color: #fcfcfc"> 在 GitHub 上查看</a>
+        </span>
+    
+    
+      <span><a href="../Stage3_FusionMLP/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../Stage5_PostProcessing/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

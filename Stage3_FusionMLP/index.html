@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://your_name.github.io/CLOCs_LQS-Module-extraction/Stage3_FusionMLP/" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Stage3 FusionMLP 融合网络 - CLOCs_LQS 融合模块文档</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../assets/_mkdocstrings.css" rel="stylesheet" />
+        <link href="../css/overrides.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Stage3 FusionMLP \u878d\u5408\u7f51\u7edc";
+        var mkdocs_page_input_path = "Stage3_FusionMLP.md";
+        var mkdocs_page_url = "/CLOCs_LQS-Module-extraction/Stage3_FusionMLP/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> CLOCs_LQS 融合模块文档
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">文档首页</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../Stage1_CandidateMatching/">Stage1 候选匹配 (Candidate Matching)</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../Stage2_PairFeatureBuilding/">Stage2 Pair 特征构建 (Pair Feature Building)</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Stage3 FusionMLP 融合网络</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#api">API 文档</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#fusionmlp">FusionMLP</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#Stage3_FusionMLP.network.FusionMLP.FusionMLP">FusionMLP</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../Stage4_ScoreAggregation/">Stage4 得分聚合 (Score Aggregation)</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../Stage5_PostProcessing/">Stage5 后处理 (PostProcessing)</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../CLOCs_LQS_framework/">CLOCs_LQS 融合框架</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">CLOCs_LQS 融合模块文档</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Stage3 FusionMLP 融合网络</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/your_name/CLOCs_LQS-Module-extraction/edit/main/docs/Stage3_FusionMLP.md">Edit on 在 GitHub 上查看</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="stage-3-fusionmlp-mlp">Stage 3 — FusionMLP（融合 MLP 网络）<a class="headerlink" href="#stage-3-fusionmlp-mlp" title="Permanent link">&para;</a></h1>
+<p>本阶段的作用是 <strong>对每个 2D–3D pair 的特征进行评分</strong>，得到 pair-level 的融合得分。</p>
+<p>该阶段包含一个可学习模块：</p>
+<ul>
+<li><strong>FusionMLP</strong><br />
+  使用 Conv1×1 层对 pair 特征进行融合预测，生成 pair-level score。</li>
+</ul>
+<hr />
+<h2 id="api">API 文档<a class="headerlink" href="#api" title="Permanent link">&para;</a></h2>
+<h3 id="fusionmlp">FusionMLP<a class="headerlink" href="#fusionmlp" title="Permanent link">&para;</a></h3>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<a id="Stage3_FusionMLP.network.FusionMLP.FusionMLP"></a>
+    <div class="doc doc-contents first">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="torch.nn.Module">Module</span></code></p>
+
+
+        <p>对每个 pair 的融合特征执行 1×1 Conv 的多层感知机，
+将输入特征维度从 4 映射到 1，输出每个 pair 的融合得分。</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>in_channels</code></b>
+                  (<code>int</code>, default:
+                      <code>4</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>int
+输入特征通道数（默认 4，对应 IoU2D/score3D/score2D/distance）。</p>
+              </div>
+            </li>
+            <li>
+              <b><code>mid_channels1</code></b>
+                  (<code>int</code>, default:
+                      <code>18</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>int
+第一层中间通道数（默认 18）。</p>
+              </div>
+            </li>
+            <li>
+              <b><code>mid_channels2</code></b>
+                  (<code>int</code>, default:
+                      <code>36</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>int
+第二层中间通道数（默认 36）。</p>
+              </div>
+            </li>
+            <li>
+              <b><code>mid_channels3</code></b>
+                  (<code>int</code>, default:
+                      <code>36</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>int
+第三层中间通道数（默认 36）。</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<details class="input" open>
+  <summary>Input</summary>
+  <p>pair_features: (B, in_channels, 1, p)
+    B=batch size(通常为1)，p为pair数。</p>
+</details>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+<b><code>pair_scores</code></b>              –
+              <div class="doc-md-description">
+                <p>(B, 1, 1, p)
+每个 pair 的融合分数。</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+              <details class="quote">
+                <summary>Source code in <code>Stage3_FusionMLP\network\FusionMLP.py</code></summary>
+                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">FusionMLP</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    对每个 pair 的融合特征执行 1×1 Conv 的多层感知机，</span>
+<span class="sd">    将输入特征维度从 4 映射到 1，输出每个 pair 的融合得分。</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        in_channels: int</span>
+<span class="sd">            输入特征通道数（默认 4，对应 IoU2D/score3D/score2D/distance）。</span>
+<span class="sd">        mid_channels1: int</span>
+<span class="sd">            第一层中间通道数（默认 18）。</span>
+<span class="sd">        mid_channels2: int</span>
+<span class="sd">            第二层中间通道数（默认 36）。</span>
+<span class="sd">        mid_channels3: int</span>
+<span class="sd">            第三层中间通道数（默认 36）。</span>
+
+<span class="sd">    Input:</span>
+<span class="sd">        pair_features: (B, in_channels, 1, p)</span>
+<span class="sd">            B=batch size(通常为1)，p为pair数。</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pair_scores: (B, 1, 1, p)</span>
+<span class="sd">            每个 pair 的融合分数。</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">in_channels</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+                 <span class="n">mid_channels1</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">18</span><span class="p">,</span>
+                 <span class="n">mid_channels2</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">36</span><span class="p">,</span>
+                 <span class="n">mid_channels3</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">36</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mlp</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">in_channels</span><span class="p">,</span> <span class="n">mid_channels1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">mid_channels1</span><span class="p">,</span> <span class="n">mid_channels2</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">mid_channels2</span><span class="p">,</span> <span class="n">mid_channels3</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="n">mid_channels3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pair_features</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mlp</span><span class="p">(</span><span class="n">pair_features</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+              </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+
+
+  </div>
+
+    </div>
+
+</div>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../Stage2_PairFeatureBuilding/" class="btn btn-neutral float-left" title="Stage2 Pair 特征构建 (Pair Feature Building)"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../Stage4_ScoreAggregation/" class="btn btn-neutral float-right" title="Stage4 得分聚合 (Score Aggregation)">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/your_name/CLOCs_LQS-Module-extraction" class="fa fa-code-fork" style="color: #fcfcfc"> 在 GitHub 上查看</a>
+        </span>
+    
+    
+      <span><a href="../Stage2_PairFeatureBuilding/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../Stage4_ScoreAggregation/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

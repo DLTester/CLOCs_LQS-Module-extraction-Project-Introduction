@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+         <loc>https://your_name.github.io/CLOCs_LQS-Module-extraction/</loc>
+         <lastmod>2025-11-19</lastmod>
+    </url>
+    <url>
+         <loc>https://your_name.github.io/CLOCs_LQS-Module-extraction/CLOCs_LQS_framework/</loc>
+         <lastmod>2025-11-19</lastmod>
+    </url>
+    <url>
+         <loc>https://your_name.github.io/CLOCs_LQS-Module-extraction/Stage1_CandidateMatching/</loc>
+         <lastmod>2025-11-19</lastmod>
+    </url>
+    <url>
+         <loc>https://your_name.github.io/CLOCs_LQS-Module-extraction/Stage2_PairFeatureBuilding/</loc>
+         <lastmod>2025-11-19</lastmod>
+    </url>
+    <url>
+         <loc>https://your_name.github.io/CLOCs_LQS-Module-extraction/Stage3_FusionMLP/</loc>
+         <lastmod>2025-11-19</lastmod>
+    </url>
+    <url>
+         <loc>https://your_name.github.io/CLOCs_LQS-Module-extraction/Stage4_ScoreAggregation/</loc>
+         <lastmod>2025-11-19</lastmod>
+    </url>
+    <url>
+         <loc>https://your_name.github.io/CLOCs_LQS-Module-extraction/Stage5_PostProcessing/</loc>
+         <lastmod>2025-11-19</lastmod>
+    </url>
+</urlset>
