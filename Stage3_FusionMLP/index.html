@@ -63,6 +63,18 @@
         </ul>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#Stage3_FusionMLP.network.FusionMLP.FusionMLP">FusionMLP</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#Stage3_FusionMLP.network.FusionMLP.FusionMLP--_1">结构说明（按顺序）</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#Stage3_FusionMLP.network.FusionMLP.FusionMLP--_2">输入</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#Stage3_FusionMLP.network.FusionMLP.FusionMLP--_3">输出</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#Stage3_FusionMLP.network.FusionMLP.FusionMLP--_4">模块用途</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#Stage3_FusionMLP.network.FusionMLP.FusionMLP.forward">forward</a>
     </li>
     </ul>
                 </li>
@@ -124,98 +136,48 @@
               Bases: <code><span title="torch.nn.Module">Module</span></code></p>
 
 
-        <p>对每个 pair 的融合特征执行 1×1 Conv 的多层感知机，
-将输入特征维度从 4 映射到 1，输出每个 pair 的融合得分。</p>
+        <p>FusionMLP 模块（CLOCs_LQS 融合阶段核心算子）。</p>
+<p>该模块对每个 (2D–3D Pair) 的融合特征进行非线性映射，用于学习 2D 检测器与 3D 检测器之间的
+关联关系。其本质是由多个 <code>1×1</code> 卷积层组成的 MLP，能够在不改变特征空间几何结构的情况下，
+对每个 pair 进行逐点特征变换，从而输出融合后的 pair-level 得分。</p>
+<p>本模块属于 <strong>可学习算子</strong>，其参数在训练过程中根据监督信号更新。</p>
+<hr />
+<h4 id="Stage3_FusionMLP.network.FusionMLP.FusionMLP--_1">结构说明（按顺序）<a class="headerlink" href="#Stage3_FusionMLP.network.FusionMLP.FusionMLP--_1" title="Permanent link">&para;</a></h4>
+<ol>
+<li><strong>Conv2d 4 → 18, kernel=1</strong></li>
+<li>初步映射 4 维融合特征（IoU₂D、score₂D、score₃D、distance₃D）。</li>
+<li><strong>ReLU 激活</strong></li>
+<li><strong>Conv2d 18 → 36, kernel=1</strong></li>
+<li>加强特征表达能力。</li>
+<li><strong>ReLU 激活</strong></li>
+<li><strong>Conv2d 36 → 36, kernel=1</strong></li>
+<li>非线性变换，提升 pair 语义区分能力。</li>
+<li><strong>ReLU 激活</strong></li>
+<li><strong>Conv2d 36 → 1, kernel=1</strong></li>
+<li>输出每个 pair 的融合得分。</li>
+</ol>
+<hr />
+<h4 id="Stage3_FusionMLP.network.FusionMLP.FusionMLP--_2">输入<a class="headerlink" href="#Stage3_FusionMLP.network.FusionMLP.FusionMLP--_2" title="Permanent link">&para;</a></h4>
+<p>Args:
+    pair_features (torch.Tensor):
+        Pair 特征张量，shape 为 <strong>(B, 4, 1, p)</strong>
+        - B：batch size
+        - 4：融合特征维度（IoU₂D、score₃D、score₂D、distance₃D）
+        - 1：固定 spatial 维
+        - p：pair 数量</p>
+<hr />
+<h4 id="Stage3_FusionMLP.network.FusionMLP.FusionMLP--_3">输出<a class="headerlink" href="#Stage3_FusionMLP.network.FusionMLP.FusionMLP--_3" title="Permanent link">&para;</a></h4>
+<p>Returns:
+    torch.Tensor:
+        融合后的 pair-level 得分，shape：<strong>(B, 1, 1, p)</strong></p>
+<hr />
+<h4 id="Stage3_FusionMLP.network.FusionMLP.FusionMLP--_4">模块用途<a class="headerlink" href="#Stage3_FusionMLP.network.FusionMLP.FusionMLP--_4" title="Permanent link">&para;</a></h4>
+<ul>
+<li>为每个 (2D 检测框, 3D 检测框) 生成一个融合得分</li>
+<li>根据 MLP 学习到的 2D/3D 信息关联规则，提升最终 3D 检测结果的排序和置信度估计</li>
+<li>属于 CLOCs_LQS 的 Stage3：FusionMLP 核心部分</li>
+</ul>
 
-
-<table class="field-list">
-  <colgroup>
-    <col class="field-name" />
-    <col class="field-body" />
-  </colgroup>
-  <tbody valign="top">
-    <tr class="field">
-      <th class="field-name">Parameters:</th>
-      <td class="field-body">
-        <ul class="first simple">
-            <li>
-              <b><code>in_channels</code></b>
-                  (<code>int</code>, default:
-                      <code>4</code>
-)
-              –
-              <div class="doc-md-description">
-                <p>int
-输入特征通道数（默认 4，对应 IoU2D/score3D/score2D/distance）。</p>
-              </div>
-            </li>
-            <li>
-              <b><code>mid_channels1</code></b>
-                  (<code>int</code>, default:
-                      <code>18</code>
-)
-              –
-              <div class="doc-md-description">
-                <p>int
-第一层中间通道数（默认 18）。</p>
-              </div>
-            </li>
-            <li>
-              <b><code>mid_channels2</code></b>
-                  (<code>int</code>, default:
-                      <code>36</code>
-)
-              –
-              <div class="doc-md-description">
-                <p>int
-第二层中间通道数（默认 36）。</p>
-              </div>
-            </li>
-            <li>
-              <b><code>mid_channels3</code></b>
-                  (<code>int</code>, default:
-                      <code>36</code>
-)
-              –
-              <div class="doc-md-description">
-                <p>int
-第三层中间通道数（默认 36）。</p>
-              </div>
-            </li>
-        </ul>
-      </td>
-    </tr>
-  </tbody>
-</table>
-
-<details class="input" open>
-  <summary>Input</summary>
-  <p>pair_features: (B, in_channels, 1, p)
-    B=batch size(通常为1)，p为pair数。</p>
-</details>
-
-<table class="field-list">
-  <colgroup>
-    <col class="field-name" />
-    <col class="field-body" />
-  </colgroup>
-  <tbody valign="top">
-    <tr class="field">
-      <th class="field-name">Returns:</th>
-      <td class="field-body">
-        <ul class="first simple">
-            <li>
-<b><code>pair_scores</code></b>              –
-              <div class="doc-md-description">
-                <p>(B, 1, 1, p)
-每个 pair 的融合分数。</p>
-              </div>
-            </li>
-        </ul>
-      </td>
-    </tr>
-  </tbody>
-</table>
               <details class="quote">
                 <summary>Source code in <code>Stage3_FusionMLP\network\FusionMLP.py</code></summary>
                 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 4</span>
@@ -260,30 +222,85 @@
 <span class="normal">43</span>
 <span class="normal">44</span>
 <span class="normal">45</span>
-<span class="normal">46</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">FusionMLP</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">FusionMLP</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    对每个 pair 的融合特征执行 1×1 Conv 的多层感知机，</span>
-<span class="sd">    将输入特征维度从 4 映射到 1，输出每个 pair 的融合得分。</span>
+<span class="sd">    FusionMLP 模块（CLOCs_LQS 融合阶段核心算子）。</span>
 
+<span class="sd">    该模块对每个 (2D–3D Pair) 的融合特征进行非线性映射，用于学习 2D 检测器与 3D 检测器之间的</span>
+<span class="sd">    关联关系。其本质是由多个 `1×1` 卷积层组成的 MLP，能够在不改变特征空间几何结构的情况下，</span>
+<span class="sd">    对每个 pair 进行逐点特征变换，从而输出融合后的 pair-level 得分。</span>
+
+<span class="sd">    本模块属于 **可学习算子**，其参数在训练过程中根据监督信号更新。</span>
+
+<span class="sd">    ---</span>
+<span class="sd">    ### 结构说明（按顺序）</span>
+<span class="sd">    1. **Conv2d 4 → 18, kernel=1**</span>
+<span class="sd">       - 初步映射 4 维融合特征（IoU₂D、score₂D、score₃D、distance₃D）。</span>
+<span class="sd">    2. **ReLU 激活**</span>
+<span class="sd">    3. **Conv2d 18 → 36, kernel=1**</span>
+<span class="sd">       - 加强特征表达能力。</span>
+<span class="sd">    4. **ReLU 激活**</span>
+<span class="sd">    5. **Conv2d 36 → 36, kernel=1**</span>
+<span class="sd">       - 非线性变换，提升 pair 语义区分能力。</span>
+<span class="sd">    6. **ReLU 激活**</span>
+<span class="sd">    7. **Conv2d 36 → 1, kernel=1**</span>
+<span class="sd">       - 输出每个 pair 的融合得分。</span>
+
+<span class="sd">    ---</span>
+<span class="sd">    ### 输入</span>
 <span class="sd">    Args:</span>
-<span class="sd">        in_channels: int</span>
-<span class="sd">            输入特征通道数（默认 4，对应 IoU2D/score3D/score2D/distance）。</span>
-<span class="sd">        mid_channels1: int</span>
-<span class="sd">            第一层中间通道数（默认 18）。</span>
-<span class="sd">        mid_channels2: int</span>
-<span class="sd">            第二层中间通道数（默认 36）。</span>
-<span class="sd">        mid_channels3: int</span>
-<span class="sd">            第三层中间通道数（默认 36）。</span>
+<span class="sd">        pair_features (torch.Tensor):</span>
+<span class="sd">            Pair 特征张量，shape 为 **(B, 4, 1, p)**</span>
+<span class="sd">            - B：batch size</span>
+<span class="sd">            - 4：融合特征维度（IoU₂D、score₃D、score₂D、distance₃D）</span>
+<span class="sd">            - 1：固定 spatial 维</span>
+<span class="sd">            - p：pair 数量</span>
 
-<span class="sd">    Input:</span>
-<span class="sd">        pair_features: (B, in_channels, 1, p)</span>
-<span class="sd">            B=batch size(通常为1)，p为pair数。</span>
-
+<span class="sd">    ---</span>
+<span class="sd">    ### 输出</span>
 <span class="sd">    Returns:</span>
-<span class="sd">        pair_scores: (B, 1, 1, p)</span>
-<span class="sd">            每个 pair 的融合分数。</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        torch.Tensor:</span>
+<span class="sd">            融合后的 pair-level 得分，shape：**(B, 1, 1, p)**</span>
 
+<span class="sd">    ---</span>
+<span class="sd">    ### 模块用途</span>
+<span class="sd">    - 为每个 (2D 检测框, 3D 检测框) 生成一个融合得分</span>
+<span class="sd">    - 根据 MLP 学习到的 2D/3D 信息关联规则，提升最终 3D 检测结果的排序和置信度估计</span>
+<span class="sd">    - 属于 CLOCs_LQS 的 Stage3：FusionMLP 核心部分</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                  <span class="n">in_channels</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
                  <span class="n">mid_channels1</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">18</span><span class="p">,</span>
@@ -302,6 +319,17 @@
         <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pair_features</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        前向传播，计算每个 pair 的融合得分。</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pair_features (torch.Tensor):</span>
+<span class="sd">                输入的 pair 特征 (B, 4, 1, p)。</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            torch.Tensor:</span>
+<span class="sd">                输出的融合得分 (B, 1, 1, p)。</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mlp</span><span class="p">(</span><span class="n">pair_features</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
               </details>
@@ -317,6 +345,100 @@
 
 
 
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="Stage3_FusionMLP.network.FusionMLP.FusionMLP.forward" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">forward</span><span class="p">(</span><span class="n">pair_features</span><span class="p">)</span></code>
+
+<a href="#Stage3_FusionMLP.network.FusionMLP.FusionMLP.forward" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>前向传播，计算每个 pair 的融合得分。</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>pair_features</code></b>
+                  (<code><span title="torch.Tensor">Tensor</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>输入的 pair 特征 (B, 4, 1, p)。</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="torch.Tensor">Tensor</span></code>
+              –
+              <div class="doc-md-description">
+                <p>torch.Tensor:
+输出的融合得分 (B, 1, 1, p)。</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+            <details class="quote">
+              <summary>Source code in <code>Stage3_FusionMLP\network\FusionMLP.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pair_features</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    前向传播，计算每个 pair 的融合得分。</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        pair_features (torch.Tensor):</span>
+<span class="sd">            输入的 pair 特征 (B, 4, 1, p)。</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        torch.Tensor:</span>
+<span class="sd">            输出的融合得分 (B, 1, 1, p)。</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mlp</span><span class="p">(</span><span class="n">pair_features</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
 
 
 
